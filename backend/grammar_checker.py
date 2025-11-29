@@ -1,16 +1,8 @@
 import nltk
 from nltk import CFG
 
-# word_lexicon = {
-#     'N': ['алим', 'ном', 'оюутан', 'гэр'],
-#     'PRO': ['би', 'чи', 'тэр'],
-#     'V': ['идэв', 'уншив', 'явна'],
-#     'ADJ': ['том', 'улаан', 'шинэ']
-# }
-
 word_lexicon = {
     'PRO': ['Би', 'Тэр', 'Чи'],
-
     'V': [
         'агшаав', 'ажиллав', 'алхав', 'арилгав', 'арчив', 'асаав', 'авлаа', 'авчирлаа', 'ажиглав',
         'барыв', 'бодлоо', 'боов', 'бүлээв', 'будав', 'буцалгав', 'бичив', 'бүлээв', 'гарав',
@@ -24,7 +16,6 @@ word_lexicon = {
         'сонууллаа', 'хөтөлөв', 'сольлоо', 'жижиглэв', 'мэдэрлээ', 'соруулав', 'зүүв', 'хамав',
         'шарлаа', 'хэмжив', 'зүлгэв', 'шивэв', 'хөглөв', 'тогтов', 'шарлаа', 'хөтөлөв'
     ],
-
     'N': [
         'агшаамал', 'алдаа', 'амттан', 'аяга', 'авдар', 'баг', 'багаж', 'бэлэг', 'бөмбөг', 'боов',
         'будаг', 'будаа', 'будаан', 'булан', 'гэр', 'гэрэл', 'гутал', 'даалин', 'дарш', 'даалгавар',
@@ -41,46 +32,31 @@ word_lexicon = {
         'үүл', 'хайрцаг', 'хөтөл', 'видео', 'бөгж', 'самар', 'шороо', 'тэмдэглэл', 'хянав',
         'навч', 'загас', 'жигнэмэг', 'ваар', 'тагтай', 'мухар', 'хөтөл', 'цас'
     ],
-
     'ADJ': ['том', 'улаан', 'шинэ', 'жижиг']
 }
 
-# 2. CFG ДҮРЭМ (Бүтэц)
-# Үгсийг биш, зөвхөн аймгуудыг (POS tags) ашиглан дүрмээ бичнэ.
 grammar_structure = """
   S -> NP VP
   VP -> NP V
   NP -> PRO | N | ADJ N
 """
 
-# 3. ҮГСИЙН САН БОЛОН ДҮРМИЙГ НЭГТГЭХ ФУНКЦ
-# Программ автоматаар үгсийн санг дүрэм рүү хөрвүүлж байна.
 def build_grammar(lexicon, structure):
     lexicon_rules = []
     for tag, words in lexicon.items():
-        # Жишээ нь: N -> 'алим' | 'ном' гэж хувиргана
         formatted_words = [f"'{w}'" for w in words]
         rule = f"{tag} -> {' | '.join(formatted_words)}"
         lexicon_rules.append(rule)
-    
     return structure + "\n" + "\n".join(lexicon_rules)
 
-# 4. ГОЛ ПРОГРАММ
 full_grammar_text = build_grammar(word_lexicon, grammar_structure)
-# full_grammar_text = build_grammar(expanded_lexicon, grammar_structure)
 grammar = CFG.fromstring(full_grammar_text)
 parser = nltk.ChartParser(grammar)
 
-# Хэрэглэгчийн оролт
-user_input = "Би цас цэвэрлэв " 
-tokens = user_input.split()
-
-print(f"Оролт: {tokens}")
-print("--- Задлан ---")
-
-try:
-    for tree in parser.parse(tokens):
-        tree.pretty_print()
-        # tree.draw()
-except ValueError:
-    print("Энэ өгүүлбэрийг задлах боломжгүй (Үг буруу эсвэл дүрэм таарахгүй байна).")
+def is_sentence_correct(sentence: str) -> bool:
+    tokens = sentence.strip().split()
+    try:
+        parses = list(parser.parse(tokens))
+        return bool(parses)
+    except ValueError:
+        return False

@@ -5,12 +5,14 @@ import React, { useState } from 'react';
 export default function Home() {
   const [sentence, setSentence] = useState('');
   const [response, setResponse] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setResponse(null);
+    setIsSuccess(null);
     try {
       const res = await fetch('http://127.0.0.1:5000/check_sentence', {
         method: 'POST',
@@ -18,9 +20,11 @@ export default function Home() {
         body: JSON.stringify({ sentence }),
       });
       const data = await res.json();
-      setResponse(data.success ? `Success: ${data.sentence}` : `Error: ${data.message}`);
+      setResponse(data.success ? `Success: ${data.sentence}` : data.message);
+      setIsSuccess(data.success);
     } catch (err) {
       setResponse('Error: Could not connect to backend.');
+      setIsSuccess(false);
     }
     setLoading(false);
   };
@@ -35,7 +39,7 @@ export default function Home() {
               value={sentence}
               onChange={e => setSentence(e.target.value)}
               placeholder="Энд дарж бичнэ үү"
-              className="flex-1 resize-none border-none outline-none bg-transparent text-lg p-2"
+              className="flex-1 resize-none border-none outline-none text-black bg-transparent text-lg p-2"
               style={{ minHeight: '300px' }}
               maxLength={1600}
               required
@@ -65,7 +69,9 @@ export default function Home() {
           </form>
           {/* Response message */}
           {response && (
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-24 bg-white border border-green-400 text-green-700 px-6 py-3 rounded shadow-lg text-lg font-medium z-10">
+            <div
+              className={`absolute left-1/2 -translate-x-1/2 bottom-24 bg-white border px-6 py-3 rounded shadow-lg text-lg font-medium z-10 ${isSuccess === false ? 'border-red-400 text-red-700' : 'border-green-400 text-green-700'}`}
+            >
               {response}
             </div>
           )}
