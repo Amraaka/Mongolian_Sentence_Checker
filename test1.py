@@ -56,7 +56,7 @@ parser = nltk.ChartParser(grammar)
 test_sentences = [
     "Тэр хэдэн төгрөг болсон бэ ",
         "Чи хаана сурдаг вэ",
-            "би ном хийсэн"    # COMPOUND
+            "тэр ном бичсэн"    # COMPOUND
 ]
 
 print(f"{'='*50}")

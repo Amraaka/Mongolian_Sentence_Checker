@@ -17,7 +17,8 @@ def check_sentence():
     if not sentence:
         return jsonify({'success': False, 'message': 'No sentence provided.'}), 400
     is_correct = is_sentence_correct(sentence)
-    if is_correct:
+    print(is_correct)
+    if is_correct[0]:
         return jsonify({'success': True, 'sentence': sentence, 'message': 'Зөв өгүүлбэр!'}), 200
     else:
         return jsonify({'success': False, 'sentence': sentence, 'message': 'Буруу өгүүлбэр эсвэл үгсийн сан, дүрэмд байхгүй үг байна.'}), 200

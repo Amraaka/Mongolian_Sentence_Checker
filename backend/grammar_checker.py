@@ -1,9 +1,8 @@
 
 import nltk
 from nltk import CFG
-from ..word_lexicon import word_lexicon
+from word_lexicon import word_lexicon
 
-# Improved CFG grammar structure
 grammar_structure = """
   S -> SIMPLE | COMPOUND | QUESTION
 
@@ -40,17 +39,19 @@ full_grammar_text = build_grammar(word_lexicon, grammar_structure)
 grammar = CFG.fromstring(full_grammar_text)
 parser = nltk.ChartParser(grammar)
 
+
 def check_grammar(sentence):
-    """
-    Checks if the given Mongolian sentence matches the CFG grammar.
-    Returns (is_valid, message)
-    """
-    tokens = sentence.split()
+    import re
+    cleaned = re.sub(r'[\.,!\-\(\)\[\]"\'\:;]', '', sentence)
+    cleaned = re.sub(r'(?<! )\?(?! )', '', cleaned)
+    tokens = [w.lower() for w in cleaned.split()]
     try:
         trees = list(parser.parse(tokens))
-        if trees:
-            return True, "Зөв өгүүлбэр: Дүрэмд тохирч байна."
-        else:
-            return False, "❌ Үр дүн гарсангүй: Дүрэмд тохирохгүй байна."
     except ValueError as e:
-        return False, f"❌ Алдаа: {e}"
+        return False, f"Алдаа: {e}"
+    if trees:
+        return True, "Зөв өгүүлбэр: Дүрэмд тохирч байна."
+    else:
+        return False, "Өгүүлбэрийг дүрмээр зурж чадахгүй байна: Дүрэмд тохирохгүй байна, эсвэл бүтэц нь буруу байна."
+
+is_sentence_correct = check_grammar
