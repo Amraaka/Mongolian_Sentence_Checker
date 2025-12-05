@@ -20,7 +20,7 @@ export default function Home() {
         body: JSON.stringify({ sentence }),
       });
       const data = await res.json();
-      setResponse(data.success ? `Success: ${data.sentence}` : data.message);
+      setResponse(data.success ? ` ${data.sentence}` : data.message);
       setIsSuccess(data.success);
     } catch (err) {
       setResponse('Error: Could not connect to backend.');
@@ -31,7 +31,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-blue-900 flex flex-col items-center justify-center">
-      <div className="text-3xl text-white font-bold text-center mb-8">Өгүүлбэр шалгагч</div>
+      <div className="text-3xl text-white font-bold text-center mb-8">Өгүүлбэрийн бүтэц шалгагч</div>
       <div className="flex items-center justify-center w-full h-full">
         <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-4xl" style={{ minHeight: '30vh' }}>
           <form onSubmit={handleSubmit} className="flex flex-col h-full">

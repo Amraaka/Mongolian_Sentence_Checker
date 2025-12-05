@@ -4,27 +4,28 @@ from nltk import CFG
 from word_lexicon import word_lexicon
 
 grammar_structure = """
-  S -> SIMPLE | COMPOUND | QUESTION
+    S -> SIMPLE | COMPOUND | QUESTION
 
-  # --- Энгийн өгүүлбэр ---
-  SIMPLE -> NP VP
+    # --- Энгийн өгүүлбэр ---
+    SIMPLE -> NP VP
 
-  # --- Нийлмэл өгүүлбэр ---
-  COMPOUND -> SIMPLE CJ SIMPLE | SIMPLE CJ COMPOUND
+    # --- Нийлмэл өгүүлбэр ---
+    COMPOUND -> SIMPLE CJ SIMPLE | SIMPLE CJ COMPOUND
 
-  # --- Асуулт өгүүлбэр ---
-  QUESTION -> QW VP '?' | QW NP VP '?' | SIMPLE '?' | NP QW VP '?'
+    # --- Асуулт өгүүлбэр ---
+    QUESTION -> QW VP QEND | QW NP VP QEND | SIMPLE QEND | NP QW VP QEND
+    QEND -> '?' | 'бэ' | 'вэ'
 
-  # --- Noun Phrase (Нэр үгийн аймаг) ---
-  NP -> PRON | N 
-  NP -> NUM N | ADJ N | ADJ NP
+    # --- Noun Phrase (Нэр үгийн аймаг) ---
+    NP -> PRON | N 
+    NP -> NUM N | ADJ N | ADJ NP
 
-  # --- Verb Phrase (Үйл үгийн аймаг) ---
-  VP -> V
-  VP -> NP V       
-  VP -> VP V       
-  VP -> ADV VP     
-  VP -> VP ADV     
+    # --- Verb Phrase (Үйл үгийн аймаг) ---
+    VP -> V
+    VP -> NP V       
+    VP -> VP V       
+    VP -> ADV VP     
+    VP -> VP ADV     
 """
 
 def build_grammar(lexicon, structure):
@@ -42,7 +43,7 @@ parser = nltk.ChartParser(grammar)
 
 def check_grammar(sentence):
     import re
-    cleaned = re.sub(r'[\.,!\-\(\)\[\]"\'\:;]', '', sentence)
+    cleaned = re.sub(r'[\.!\-\(\)\[\]"\'\:;]', '', sentence)
     cleaned = re.sub(r'(?<! )\?(?! )', '', cleaned)
     tokens = [w.lower() for w in cleaned.split()]
     try:
